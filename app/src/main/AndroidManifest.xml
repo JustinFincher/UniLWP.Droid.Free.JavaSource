@@ -1,0 +1,43 @@
+<manifest package="com.justzht.unity.lwp" xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
+    <uses-feature
+        android:name="android.software.live_wallpaper"
+        android:required="true" >
+    </uses-feature>
+    <application>
+        <provider
+            android:authorities="${applicationId}.LiveWallpaperInitProvider"
+            android:name=".LiveWallpaperInitProvider"
+            android:directBootAware="true"
+            android:exported="false"
+            android:initOrder="1000"
+            />
+        <service
+            android:name=".LiveWallpaperPresentationService"
+            android:permission="android.permission.BIND_WALLPAPER">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" >
+                </action>
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/wallpaper" >
+            </meta-data>
+        </service>
+        <activity android:name="com.unity3d.player.UnityPlayerActivity" tools:node="remove"/>
+        <activity
+            android:launchMode="singleTask"
+            android:name=".LiveWallpaperPresentationActivity"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
+            <meta-data android:name="android.notch_support" android:value="true" />
+        </activity>
+        <meta-data android:name="unilwp.version" android:value="${uniLWPVersion}"/>
+    </application>
+</manifest>

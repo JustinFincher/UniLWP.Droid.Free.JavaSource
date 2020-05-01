@@ -1,0 +1,52 @@
+apply plugin: 'com.android.library'
+
+android {
+    def versionCodeRead = 0
+    def versionNameRead = "0.0 (0)"
+    def versionPropsFile = file('version.properties')
+    if (versionPropsFile.canRead())
+    {
+        def value = 0
+        if ('assembleRelease' in gradle.startParameter.taskNames) {
+            value = 1
+        }
+        Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+        versionProps['VERSION_BUILD'] = (versionProps['VERSION_BUILD'].toInteger() + 1).toString()
+        versionProps.store(versionPropsFile.newWriter(), null)
+
+        versionCodeRead = versionProps['VERSION_BUILD'].toInteger()
+        versionNameRead = versionProps['VERSION_MAJOR'] + "." + versionProps['VERSION_MINOR'] + " (" + versionProps['VERSION_BUILD'] + ") FREE"
+    }
+
+    compileSdkVersion 29
+    defaultConfig {
+        minSdkVersion 24
+        targetSdkVersion 29
+        versionCode versionCodeRead
+        versionName versionNameRead
+        archivesBaseName = "UniLWP"
+        buildConfigField "String", "UNILWP_VERSION", "\"${versionNameRead}\""
+        manifestPlaceholders = [uniLWPVersion:versionNameRead]
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+            consumerProguardFiles 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+            consumerProguardFiles 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+}
+
+dependencies {
+    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+}
